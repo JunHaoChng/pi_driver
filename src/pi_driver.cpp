@@ -14,23 +14,25 @@ using namespace std;
 // This controls the max range of the PWM signal
 #define RANGE 1024
 
-class Pi_driver
+class Pi_driver : public rclcpp::Node
 {
     public:
-    Pi_driver()
+    Pi_driver() : Node("pi_driver")
     {
         cout<<"Hello world! One Pi driver coming up!";
         if (!bcm2835_init()) 
         {
             std::cout << "Initialization failed." << std::endl;
-            std::cout << "Check if /dev/gpiomem permissions are correctly set."
-                    << std::endl;
-            exit(1);
+        //    std::cout << "Check if /dev/gpiomem permissions are correctly set."
+        //            << std::endl;
+        //    exit(1);
         } 
         else
         {
-            pin_setup();
-            pwm_setup();
+            //pin_setup();
+            //pwm_setup();
+	    // spin();
+	    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Looping");
         }
     }
     void spin()
@@ -56,6 +58,7 @@ class Pi_driver
         data += direction;
         bcm2835_pwm_set_data(PWM_CHANNEL, data);
         bcm2835_delay(1);
+	this_thread::sleep_for(0.5s);
         }
 
         bcm2835_close();
@@ -81,9 +84,10 @@ class Pi_driver
     }  
 };
 
-int main()
+int main(int argc, char* argv[])
 {
-    Pi_driver pi_d;
-    pi_d.spin();
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<Pi_driver>());
+    rclcpp::shutdown();
     return 0;
 }
