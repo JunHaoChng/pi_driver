@@ -10,5 +10,5 @@ sudo chown root.gpio /dev/gpiomem
 sudo chmod g+rw /dev/gpiomem
 
 source /opt/ros/foxy/setup.bash
-source $HOME/deployment_ws/install/setup.bash
+# source $HOME/deployment_ws/install/setup.bash
 #ros2 launch dry_contact_lift_sensor chart_lift_node.launch.xml
