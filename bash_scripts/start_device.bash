@@ -1,9 +1,3 @@
-#!/bin/bash
-
-#sudo rfkill unblock all
-#sudo systemctl restart hostapd.service
-#sudo apt update && upgrade -y
-
 sudo groupadd gpio
 sudo adduser $USER gpio
 sudo chown root.gpio /dev/gpiomem

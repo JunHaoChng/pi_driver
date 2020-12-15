@@ -29,3 +29,6 @@ cd ..
 mv bcm2835* ../
 cd ..
 rm -r $working_directory/$filename_extract
+
+sudo apt update
+sudo apt install python3-gpiozero
