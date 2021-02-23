@@ -12,4 +12,4 @@
 source /opt/ros/foxy/setup.bash
 source $HOME/repos/pi_driver/install/setup.bash
 # udevadm trigger
-#ros2 launch dry_contact_lift_sensor chart_lift_node.launch.xml
+ros2 launch dry_contact_lift_sensor chart_lift_node.launch.xml
