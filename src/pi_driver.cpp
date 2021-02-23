@@ -1,9 +1,13 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "pi_driver.hpp"
 #include "bcm2835.h"
 #include "rclcpp/rclcpp.hpp"
 
-using namespace std;
+using std::cout;
+using std::endl;
+using namespace std::chrono_literals;
 
 // PWM output on RPi Plug P1 pin 12 (which is GPIO pin 18)
 // in alt fun 5.
@@ -19,17 +23,16 @@ class Pi_driver : public rclcpp::Node
     public:
     Pi_driver() : Node("pi_driver")
     {
-        cout<<"Hello world! One Pi driver coming up!";
-        if (!bcm2835_init()) 
-        {
-            std::cout << "Initialization failed." << std::endl;
-        //    std::cout << "Check if /dev/gpiomem permissions are correctly set."
-        //            << std::endl;
-        //    exit(1);
-        } 
+        cout<<"Hello world! One Pi driver coming up!"<<endl;
+	if (!bcm2835_init())
+	{
+		cout<<"Initialization failed." <<endl;
+		cout<<"Check if /dev/gpiomem permissiens are correctly set."<<endl;
+            exit(1); 
+	}
         else
         {
-            //pin_setup();
+            pin_setup();
             //pwm_setup();
 	    // spin();
 	    RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Looping");
@@ -58,7 +61,7 @@ class Pi_driver : public rclcpp::Node
         data += direction;
         bcm2835_pwm_set_data(PWM_CHANNEL, data);
         bcm2835_delay(1);
-	this_thread::sleep_for(0.5s);
+	std::this_thread::sleep_for(200ms);
         }
 
         bcm2835_close();
@@ -69,13 +72,13 @@ class Pi_driver : public rclcpp::Node
 	// Set the output pin to Alt Fun 5, to allow PWM channel 0 to be output there
         bcm2835_gpio_fsel(PIN, BCM2835_GPIO_FSEL_ALT5);
         bcm2835_gpio_write(PIN, HIGH);
-        this_thread::sleep_for(0.5s);
+        std::this_thread::sleep_for(200ms);
 	bcm2835_gpio_write(PIN, LOW);
- 	this_thread::sleep_for(0.5s);
+ 	std::this_thread::sleep_for(200ms);
         bcm2835_gpio_write(PIN, HIGH);
-        this_thread::sleep_for(0.5s);
+        std::this_thread::sleep_for(200ms);
 	bcm2835_gpio_write(PIN, LOW);
- 	this_thread::sleep_for(0.5s);
+ 	std::this_thread::sleep_for(200ms);
     }
 
     void pwm_setup()
