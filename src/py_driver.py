@@ -31,12 +31,12 @@ class Pi_Driver():
 
     @property
     def move(self, linear_speed, angualr_speed, direction): # Use cmd_vel
-        motor.forward()
-        
+        pass
         # Check that movement is consistent for both wheels, maybe with a scalar in the PWM.
     
     @move.setter
-    def move.setter(self)
+    def move.setter(self):
+        pass
 
 if __name__ == '__main__':
     pi_d = Pi_Driver(
