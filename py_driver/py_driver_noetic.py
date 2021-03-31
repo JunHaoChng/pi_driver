@@ -1,5 +1,6 @@
-import rclpy
-from rclpy.node import Node
+#!/usr/bin/env python3
+import rospy
+# from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from gpiozero import Motor
 from gpiozero import PWMOutputDevice
@@ -7,11 +8,11 @@ import time
 import numpy as np
 import pprint
 
-class Py_Driver(Node): 
+class Py_Driver():#Node): 
     def __init__(self, **kwargs):
-        super().__init__('py_driver')
-        self.subscription = self.create_subscription(Twist,'cmd_vel',self.listener_callback,0) # Store 10 messages, drop the oldest one
-        self.subscription  # prevent unused variable warning
+        #super().__init__('py_driver')
+        #self.subscription = self.create_subscription(Twist,'cmd_vel',self.listener_callback,0) # Store 10 messages, drop the oldest one
+        #self.subscription  # prevent unused variable warning
         self.kwargs = kwargs
         # print(self.kwargs)
 
@@ -58,14 +59,16 @@ class Py_Driver(Node):
             print("Movement constrained")
 
         if (abs(_move_dict['linear']) <= 0.5 and _move_dict['angular']== 0.0) :
+            print("Change")
             self._left_pwm.value =    abs(_move_dict['linear']/0.5)
             self._right_pwm.value =   abs(_move_dict['linear']/0.5)
             if np.sign(_move_dict['linear']) == 1:
                 self._left_motor.forward()
                 self._right_motor.forward()
-            if np.sign(_move_dict['linear']) == -1:
+            elif np.sign(_move_dict['linear']) == -1:
                 self._left_motor.backward()
                 self._right_motor.backward()
+                print("Acts")
             print("Linear movement")
 
         elif (abs(_move_dict['linear']) == 0.0 and abs(_move_dict['angular']) >= 1.0) :
@@ -121,8 +124,9 @@ class Py_Driver(Node):
         self._right_motor.stop()        
 
 def main(args=None):
-    rclpy.init(args=args)
-
+    #rclpy.init(args=args)
+    rospy.init_node('py_driver', anonymous=False)
+    
     # Hardcode for now, recommend to use a json file in the future
     py_driver = Py_Driver(
         left_pin= 12,      left_active_high = True,          # left PWM settings 
@@ -131,9 +135,14 @@ def main(args=None):
         right_forward=14,  right_backward=23, right_pwm=True,   # right Motor settings (using L298N)
     )
 
+    rospy.Subscriber("cmd_vel", Twist, py_driver.listener_callback)
+    rospy.spin()
     # py_driver.test_motors()
-    rclpy.spin(py_driver)
-    rclpy.shutdown()
+    # rclpy.spin(py_driver)
+    # rclpy.shutdown()
 
 if __name__ == '__main__':
-    main()
+    try:
+        main()
+    except rospy.ROSInterruptException:
+        pass
